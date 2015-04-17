@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Grid Accordian</title>
+		<link rel="stylesheet" type="text/css" href="css/grid_accordion.css">
+	</head>
+	<body>
+		<div id="my-ga" class="ga-accordion" style="width: 100%;">
+			<div class="ga-item">
+				<a href="#"><img class="ga-background" src="img/1.jpg" /></a>
+				<div class="ga-brief">
+					This is A brief!
+				</div>
+				<div class="ga-description">
+					This is A Description!
+				</div>
+			</div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/2.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/3.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/4.jpg" /></a></div>
+
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/5.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/6.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/7.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/8.jpg" /></a></div>
+
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/9.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/10.jpg" /></a></div>
+			<div class="ga-item">
+				<a href="#"><img class="ga-background" src="img/11.jpg" /></a>
+				<div class="ga-brief">
+					This is A brief!
+				</div>
+			</div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/12.jpg" /></a></div>
+
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/13.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/14.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/15.jpg" /></a></div>
+			<div class="ga-item"><a href="#"><img class="ga-background" src="img/16.jpg" /></a></div>
+		</div>
+
+		<script type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+		<script type="text/javascript" src="js/grid-accordion.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("#my-ga").GridAccordion({
+					cols: 4,
+					baseFontSize: 10
+				})
+			})
+		</script>
+	</body>
+</html>

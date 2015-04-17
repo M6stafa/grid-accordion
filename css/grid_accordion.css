@@ -1,0 +1,30 @@
+.ga-accordion
+{
+	display: block;
+}
+
+.ga-item
+{
+	overflow: hidden;
+	display: block;
+	position: absolute;
+}
+
+.ga-brief
+{
+	position: absolute;
+	font-size: 2em;
+	border-radius: 3px;
+	z-index: 9999;
+}
+
+.ga-description
+{
+	position: absolute;
+	font-size: 1em;
+	z-index: 9999;
+}
+
+.ga-background
+{
+}
