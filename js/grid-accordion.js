@@ -32,8 +32,11 @@
 		var rows = Math.floor(ga_object.find('.ga-item').size() / settings.cols);
 		var totalWidth = ga_object.width() - (settings.cols * settings.margin * 2); // The total width that we have
 		var totalHeight = -1 * (rows * settings.margin * 2);
+		var ga_object_width = ga_object.width();
+		var ga_object_height = rows * settings.margin * 2;
 		var topOffset = settings.margin + ga_object.offset().top;
 		var leftOffset = settings.margin + ga_object.offset().left;
+		ga_object.attr('ga-current-mouseover-index', 0);
 
 		// Scale the settings
 		var settingsScale = totalWidth / settings.baseWindowSize;
@@ -49,10 +52,14 @@
 		// description settings
 		$(this).find('.ga-description').css('display', 'none');
 
+		ga_object.find('.ga-description').css('color', settings.briefFontColor); // TODO: add specified variable
+		ga_object.find('.ga-description').css('background-color', settings.briefBGColor); // TODO: add specified variable
+
 		var firstRowImgsWidth = 0; // resize all images depend on this
 
 		ga_object.find(".ga-item").each(function(index) {
 			// Set index on divs to easily access them in later
+			$(this).attr('ga-index', index + 1);
 			row = Math.floor(index / settings.cols) + 1;
 			col = (index % settings.cols) + 1;
 			$(this).attr('ga-row', row);
@@ -107,108 +114,138 @@
 
 			// Calculate totalHeight
 			totalHeight += divHeight;
+			ga_object_height += divHeight;
 
 			// set top
 			$('[ga-row="' + row + '"]').css('top', top + 'px');
 
 			// set the top position of brief
 			var brief_obj = $('[ga-row="' + row + '"]').find('.ga-brief');
-			console.log(brief_obj.height());
 			brief_obj.css('top', divHeight - brief_obj.height() - briefOffset + 'px');
 
 			top += divHeight + (2 * settings.margin);
 		});
 
+		// Set main div width and height for keep its space
+		ga_object.css({
+			width: ga_object_width + 'px',
+			height: ga_object_height + 'px'
+		});
+
 
 		// Animates
 		ga_object.find('.ga-item').mouseover(function(event) {
-			var effectedRow = $(this).attr('ga-row');
-			var effectedCol = $(this).attr('ga-col');
-			var top = topOffset;
-			var left = leftOffset;
+			var current_mouseover_index = ga_object.attr('ga-current-mouseover-index');
+			if ($(this).attr('ga-index') != current_mouseover_index)
+			{
+				current_mouseover_index = $(this).attr('ga-index');
+				ga_object.attr('ga-current-mouseover-index', current_mouseover_index);
 
-			var divsHeight	= [];
-			var divsWidth	= [];
-			var divsTop		= [];
-			var divsLeft	= [];
+				var effectedRow = $(this).attr('ga-row');
+				var effectedCol = $(this).attr('ga-col');
 
-			var briefsTop	= []; // save by item index
-			var briefsLeft	= []; // save by item index
-			var descriptionTop	= 0; // only opened div has it
-			var descriptionLeft	= 0; // only opened div has it
+				var top = topOffset;
+				var left = leftOffset;
 
-			var largWidth	= parseInt($(this).attr('ga-larg-width'));
-			var largHeight	= parseInt($(this).attr('ga-larg-height'));
+				var divsHeight	= [];
+				var divsWidth	= [];
+				var divsTop		= [];
+				var divsLeft	= [];
 
-			var divsWidthScale	= (totalWidth - largWidth) / (totalWidth - parseInt($(this).attr('ga-base-width')));
-			var divsHeightScale	= (totalHeight - largHeight) / (totalHeight - parseInt($(this).attr('ga-base-height')));
+				var largWidth	= parseInt($(this).attr('ga-larg-width'));
+				var largHeight	= parseInt($(this).attr('ga-larg-height'));
 
-			ga_object.find('[ga-row="1"]').each(function(index) {
-				// Set width
-				var col = $(this).attr('ga-col');
-				var divWidth = 0;
+				var divsWidthScale	= (totalWidth - largWidth) / (totalWidth - parseInt($(this).attr('ga-base-width')));
+				var divsHeightScale	= (totalHeight - largHeight) / (totalHeight - parseInt($(this).attr('ga-base-height')));
 
-				if (col == effectedCol) {
-					divWidth = largWidth;
-				}
-				else {
-					var baseWidth = parseInt($(this).attr('ga-base-width'));
-					divWidth = baseWidth * divsWidthScale;
-				}
+				ga_object.find('[ga-row="1"]').each(function(index) {
+					// Set width
+					var col = $(this).attr('ga-col');
+					var divWidth = 0;
 
-				divsWidth[index] = divWidth;
-				divsLeft[index] = left;
+					if (col == effectedCol) {
+						divWidth = largWidth;
+					}
+					else {
+						var baseWidth = parseInt($(this).attr('ga-base-width'));
+						divWidth = baseWidth * divsWidthScale;
+					}
 
-				// Set Left
-				left += divWidth + (2 * settings.margin);
-			});
+					divsWidth[index] = divWidth;
+					divsLeft[index] = left;
 
-			ga_object.find('[ga-col="1"]').each(function(index) {
-				// Set Height
-				var row = $(this).attr('ga-row');
-				var divHeight = 0;
+					// brief_obj.css('left', briefOffset + 'px');
 
-				if (row == effectedRow) {
-					divHeight = largHeight;
-				}
-				else {
-					var baseHeight = parseInt($(this).attr('ga-base-height'));
-					divHeight = baseHeight * divsHeightScale;
-				}
+					// Set Left
+					left += divWidth + (2 * settings.margin);
+				});
 
-				divsHeight[index] = divHeight;
-				divsTop[index] = top;
+				ga_object.find('[ga-col="1"]').each(function(index) {
+					// Set Height
+					var row = $(this).attr('ga-row');
+					var divHeight = 0;
 
-				// Set top
-				top += divHeight + (2 * settings.margin);
-			});
+					if (row == effectedRow) {
+						divHeight = largHeight;
+					}
+					else {
+						var baseHeight = parseInt($(this).attr('ga-base-height'));
+						divHeight = baseHeight * divsHeightScale;
+					}
 
-			ga_object.find('.ga-item').each(function(index) {
-				var col = $(this).attr('ga-col') - 1;
-				var row = $(this).attr('ga-row') - 1;
+					divsHeight[index] = divHeight;
+					divsTop[index] = top;
 
-				$(this).clearQueue();
-				$(this).stop();
+					// Set top
+					top += divHeight + (2 * settings.margin);
+				});
 
-				$(this).animate({
-					width:	divsWidth[col],
-					height:	divsHeight[row],
-					left:	divsLeft[col],
-					top:	divsTop[row]
-				}, settings.speed);
+				ga_object.find('.ga-item').each(function(index) {
+					var col = $(this).attr('ga-col') - 1;
+					var row = $(this).attr('ga-row') - 1;
 
-				var brief_obj = $(this).find('.ga-brief');
-				if (brief_obj != null)
-				{
-					brief_obj.clearQueue();
-					brief_obj.stop();
+					$(this).clearQueue();
+					$(this).stop();
 
-					brief_obj.animate({
-						top: briefsTop[index],
-						left: briefsLeft[index]
+					$(this).animate({
+						width:	divsWidth[col],
+						height:	divsHeight[row],
+						left:	divsLeft[col],
+						top:	divsTop[row]
 					}, settings.speed);
-				}
-			});
+
+					var description_height = 0;
+					var description_obj = $(this).find('.ga-description');
+					if (description_obj.length > 0)
+					{
+						description_obj.clearQueue();
+						description_obj.stop();
+
+						if (col + 1 == effectedCol && row + 1 == effectedRow)
+						{
+							description_height = description_obj.height();
+							description_obj.slideDown(settings.speed);
+						}
+						else {
+							description_obj.slideUp(settings.speed);
+						}	
+					}
+
+					var brief_obj = $(this).find('.ga-brief');
+					if (brief_obj.length > 0)
+					{
+						// Animate of briefs
+						var briefTop = parseInt(divsHeight[row]) - brief_obj.height() - description_height - briefOffset + 'px';
+
+						brief_obj.clearQueue();
+						brief_obj.stop();
+
+						brief_obj.animate({
+							top: briefTop
+						}, settings.speed);
+					}
+				});
+			}
 		});
 
 		return ga_object;

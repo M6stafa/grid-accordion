@@ -21,7 +21,8 @@
 .ga-description
 {
 	position: absolute;
-	font-size: 1em;
+	bottom: 0px;
+	font-size: 3em;
 	z-index: 9999;
 }
 
