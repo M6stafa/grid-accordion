@@ -1,10 +1,10 @@
 /*!Grid Accordion*/
 /**
  *
- * Version: 0.0.2
+ * Version: 0.0.3
  * Requires: jQuery v1.9+
  *
- * Copyright (c) 2015 Mostafa Najafi (m6stafa.com)
+ * Copyright (c) 2015 Mostafa Najafi (http://www.m6stafa.com)
  * Under MIT License (http://www.opensource.org/licenses/mit-license.php)
  *
  */
@@ -23,8 +23,6 @@
 			baseFontSize: 14,
 
 			briefOffset: 2,
-			briefFontColor: "rgba(0, 0, 0, 1.0)",
-			briefBGColor: "rgba(127, 127, 127, 0.8)", // background-color
 
 		}, options);
 
@@ -45,17 +43,13 @@
 
 		ga_object.css('font-size', baseFontSize + 'px');
 
-		// brief settings
-		ga_object.find('.ga-brief').css('color', settings.briefFontColor);
-		ga_object.find('.ga-brief').css('background-color', settings.briefBGColor);
-
 		// description settings
 		$(this).find('.ga-description').css('display', 'none');
 
-		ga_object.find('.ga-description').css('color', settings.briefFontColor); // TODO: add specified variable
-		ga_object.find('.ga-description').css('background-color', settings.briefBGColor); // TODO: add specified variable
-
 		var firstRowImgsWidth = 0; // resize all images depend on this
+
+		var briefsHeight = [];
+		var descriptionsHeight = [];
 
 		ga_object.find(".ga-item").each(function(index) {
 			// Set index on divs to easily access them in later
@@ -67,6 +61,9 @@
 
 			// Add settings.margin
 			$(this).css('settings.margin', settings.margin + 'px');
+
+			briefsHeight[index + 1] = $(this).find('.ga-brief').length > 0 ? $(this).find('.ga-brief').height() : 0;
+			descriptionsHeight[index + 1] = $(this).find('.ga-description').length > 0 ? $(this).find('.ga-description').height() : 0;
 
 			// calculate firstRowImgsWidth
 			if (row == 1) { 
@@ -132,7 +129,6 @@
 			height: ga_object_height + 'px'
 		});
 
-
 		// Animates
 		ga_object.find('.ga-item').mouseover(function(event) {
 			var current_mouseover_index = ga_object.attr('ga-current-mouseover-index');
@@ -174,8 +170,6 @@
 					divsWidth[index] = divWidth;
 					divsLeft[index] = left;
 
-					// brief_obj.css('left', briefOffset + 'px');
-
 					// Set Left
 					left += divWidth + (2 * settings.margin);
 				});
@@ -200,7 +194,9 @@
 					top += divHeight + (2 * settings.margin);
 				});
 
-				ga_object.find('.ga-item').each(function(index) {
+				// Set animations
+				ga_object.find('.ga-item').each(function() {
+					var index = $(this).attr('ga-index');
 					var col = $(this).attr('ga-col') - 1;
 					var row = $(this).attr('ga-row') - 1;
 
@@ -214,17 +210,16 @@
 						top:	divsTop[row]
 					}, settings.speed);
 
-					var description_height = 0;
 					var description_obj = $(this).find('.ga-description');
+					var descriptionHeight = 0;
 					if (description_obj.length > 0)
 					{
 						description_obj.clearQueue();
 						description_obj.stop();
 
-						if (col + 1 == effectedCol && row + 1 == effectedRow)
-						{
-							description_height = description_obj.height();
+						if (col + 1 == effectedCol && row + 1 == effectedRow) {
 							description_obj.slideDown(settings.speed);
+							descriptionHeight = descriptionsHeight[index];
 						}
 						else {
 							description_obj.slideUp(settings.speed);
@@ -235,7 +230,7 @@
 					if (brief_obj.length > 0)
 					{
 						// Animate of briefs
-						var briefTop = parseInt(divsHeight[row]) - brief_obj.height() - description_height - briefOffset + 'px';
+						var briefTop = parseInt(divsHeight[row]) - briefsHeight[index] - descriptionHeight - briefOffset + 'px';
 
 						brief_obj.clearQueue();
 						brief_obj.stop();
